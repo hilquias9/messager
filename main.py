@@ -1,0 +1,2 @@
+class Messager:
+    pass
