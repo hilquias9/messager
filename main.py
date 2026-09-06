@@ -7,7 +7,9 @@ class Messager:
             self.headers[f"end_{header}"]=token_hex(8).encode()
 
     def unpackger(self,msg:bytes):
-        pass
+        start=msg.find(self.headers["length"])
+        end=msg.find(self.headers["end_length"])
+        return start,end
 
     def m_packger(self,msg:bytes,header): #message
         msg_length=str(len(msg)+32+(len(msg)+32)).encode()
@@ -20,3 +22,7 @@ class Messager:
     def see_headers(self):
         return self.headers
 
+a=Messager("as")
+msg=a.m_packger(b"Hilquias: ola bom dia","as")
+unpack=a.unpackger(msg)
+print(unpack)
