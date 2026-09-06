@@ -6,13 +6,24 @@ class Messager:
             self.headers[header]=token_hex(8).encode()
             self.headers[f"end_{header}"]=token_hex(8).encode()
 
-    def unpackger(self,msg:bytes):
-        start=msg.find(self.headers["length"])
-        end=msg.find(self.headers["end_length"])
-        return start,end
+    def unpackger(self,msg:bytes,header):
+        message=[]
+        while True:
+            start=msg.find(self.headers["length"])
+            end=msg.find(self.headers["end_length"])
+            msg_length=int(msg[start+16:end])
+            message.append(msg[end+16:msg.find(self.headers[f"end_{header}"])])
+            msg=msg[msg_length:]
+            if len(msg)==0:
+                break
+        return message
+
 
     def m_packger(self,msg:bytes,header): #message
-        msg_length=str(len(msg)+32+(len(msg)+32)).encode()
+        counter=0
+        for number in str(len(msg)):
+            counter+=1
+        msg_length=str(64+len(msg)+counter).encode()
         message=self.headers[header]+self.headers["length"]+msg_length+self.headers["end_length"]+msg+self.headers[f"end_{header}"]
         return message
 
@@ -22,7 +33,3 @@ class Messager:
     def see_headers(self):
         return self.headers
 
-a=Messager("as")
-msg=a.m_packger(b"Hilquias: ola bom dia","as")
-unpack=a.unpackger(msg)
-print(unpack)
