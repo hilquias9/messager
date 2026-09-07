@@ -5,6 +5,7 @@ class Messager:
         for header in headers:
             self.headers[header]=token_hex(8).encode()
             self.headers[f"end_{header}"]=token_hex(8).encode()
+        self.stack=b""
 
     def unpackger(self,msg:bytes,header):
         message=[]
@@ -18,17 +19,13 @@ class Messager:
                 break
         return message
 
-
-    def m_packger(self,msg:bytes,header): #message
+    def packger(self,msg:bytes,header): 
         counter=0
         for number in str(len(msg)):
             counter+=1
         msg_length=str(64+len(msg)+counter).encode()
         message=self.headers[header]+self.headers["length"]+msg_length+self.headers["end_length"]+msg+self.headers[f"end_{header}"]
         return message
-
-    def f_packger(self,msg:bytes): #file
-        pass
 
     def see_headers(self):
         return self.headers
